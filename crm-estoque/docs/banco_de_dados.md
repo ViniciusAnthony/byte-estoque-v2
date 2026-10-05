@@ -1,12 +1,12 @@
 # Schema: schema1
 Database: mysql
-Tables: 14
+Tables: 13
 Columns are NOT NULL unless marked nullable.
 
 ## empresas
 id_empresa: int PK auto FK
 razão social: varchar
-cnpj: varchar unique
+CNPJ: varchar unique
 criado_em: date
 IE: varchar
 CEP: varchar
@@ -14,24 +14,11 @@ CEP: varchar
 ## usuarios
 id_usuario: int PK auto FK unsigned
 id_empresa: int
-id_plano: int FK
+id_cargo: int FK
 nome: varchar
 email: varchar unique
 hash_senha: varchar unique
-status: varchar
-
-## planos
-id_plano: varchar PK
-tipo: varchar unique
-preco: int unique
-
-## assinatura
-id_assinatura: int PK auto unsigned
-id_empresa: int
-id_plano: int FK
-iniciada_em: date
-encerrada_em: date
-proxima_cobranca: date
+admin_sistema: boolean
 
 ## parceiros
 id_parceiro: int PK auto FK unsigned
@@ -58,13 +45,12 @@ id_empresa: int
 nome: varchar unique
 
 ## produtos
-id_produto: int PK auto FK unsigned
+sku: varchar PK
 id_categoria: int
-sku: varchar
 nome: varchar
 descricao: varchar
 unidade: int
-preco: int
+preco: decimal
 
 ## operacoes
 id_operacao: int PK auto FK unsigned
@@ -77,7 +63,7 @@ observacoes: text
 
 ## operacao_itens
 id_operacao: int PK auto unsigned
-id_produto: int PK
+id_produto: int PK FK
 quantidade: int
 valor_unitario: int
 
@@ -86,7 +72,7 @@ id_titulo: int PK auto FK unsigned
 id_parceiro: int
 tipo: varchar
 descricao: varchar
-valor: int
+double: int
 vencimento: date
 cancelado: boolean
 
@@ -115,11 +101,12 @@ valor: int
 ocorrencia: date
 descricao: text
 
+## cargos
+id_cargo: int PK auto unsigned
+cargo: int
+
 ## Relationships
 usuarios.id_empresa → empresas.id_empresa (one-to-one)
-planos.id_plano → usuarios.id_plano (one-to-one)
-assinatura.id_empresa → empresas.id_empresa (one-to-one)
-planos.id_plano → assinatura.id_plano (one-to-one)
 parceiros.id_empresa → empresas.id_empresa (one-to-one)
 interacoes.id_parceiro → parceiros.id_parceiro (one-to-one)
 interacoes.id_usuario → usuarios.id_usuario (one-to-one)
@@ -128,13 +115,14 @@ produtos.id_categoria → categorias.id_categoria (one-to-one)
 operacoes.id_parceiro → parceiros.id_parceiro (one-to-one)
 operacoes.id_usuario → usuarios.id_usuario (one-to-one)
 operacao_itens.id_operacao → operacoes.id_operacao (one-to-one)
-operacao_itens.id_produto → produtos.id_produto (one-to-one)
+operacao_itens.id_produto → produtos.sku (one-to-one)
 titulos_financeiros.id_parceiro → parceiros.id_parceiro (one-to-one)
 baixas_financeiras.id_titulo → titulos_financeiros.id_titulo (one-to-one)
 baixas_financeiras.id_caixa → caixas.id_caixa (one-to-one)
 caixas.aberto_por → usuarios.id_usuario (one-to-one)
 operacoes_caixa.id_caixa → caixas.id_caixa (one-to-one)
 operacoes_caixa.id_usuario → usuarios.id_usuario (one-to-one)
+cargos.id_cargo → usuarios.id_cargo (one-to-one)
 
 ---
 If you suggest changes to this schema, ALSO return them as a DrawSQL patch: one fenced ```json code block, so I can apply them to my diagram. If you are only answering a question, skip the patch.
